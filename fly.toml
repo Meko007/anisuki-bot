@@ -1,0 +1,20 @@
+# fly.toml app configuration file generated for anisuki-bot on 2024-02-06T15:41:37+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'anisuki-bot'
+primary_region = 'lhr'
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[processes]
+app = "node ./build/bot.js"
+
+# Adjust the NODE_ENV environment variable to suppress the warning
+[build.args]
+NODE_ENV = "production"
+
+[build]
+builder = "heroku/builder:20"
+

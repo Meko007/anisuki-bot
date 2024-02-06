@@ -38,6 +38,9 @@ bot.api.config.use(autoRetry({
 	maxDelaySeconds: 5,
 }));
 
+process.once("SIGINT", () => bot.stop());
+process.once("SIGTERM", () => bot.stop());
+
 run(bot);
 bot.catch((err) => {
     const ctx = err.ctx;
