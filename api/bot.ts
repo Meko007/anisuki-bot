@@ -1,6 +1,6 @@
-import { Bot, webhookCallback } from "grammy";
+import { Bot, webhookCallback } from 'grammy';
 import { limit } from '@grammyjs/ratelimiter';
-import { autoRetry } from "@grammyjs/auto-retry";
+import { autoRetry } from '@grammyjs/auto-retry';
 import start from './commands/start';
 import quotes from './commands/quotes';
 import animetv from './commands/animetv';
@@ -11,7 +11,7 @@ const token = process.env.BOT_TOKEN as string;
 const bot = new Bot(token);
 
 bot.api.setMyCommands([
-    {
+	{
 		command: 'random_quote', 
 		description: 'Get a random quote from a random anime character'
 	},
@@ -27,20 +27,20 @@ bot.use(start, quotes, animetv, news);
 const env = process.env.NODE_ENV;
 
 if (env === 'dev') {
-    bot.start();
+	bot.start();
 }
 
 bot.use(limit({
-    timeFrame: 5000,
-    limit: 3,
-    onLimitExceeded: ctx => ctx.reply('Too many requests, please try again later.'),
-    storageClient: 'MEMORY_STORE',
-    keyGenerator: (ctx) => ctx.from && ctx.from.id.toString(),
+	timeFrame: 5000,
+	limit: 3,
+	onLimitExceeded: ctx => ctx.reply('Too many requests, please try again later.'),
+	storageClient: 'MEMORY_STORE',
+	keyGenerator: (ctx) => ctx.from && ctx.from.id.toString(),
 }));
 
 bot.api.config.use(autoRetry({
-    maxRetryAttempts: 1,
-    maxDelaySeconds: 5,
+	maxRetryAttempts: 1,
+	maxDelaySeconds: 5,
 }));
 
-export default webhookCallback(bot, "https");
+export default webhookCallback(bot, 'https');
