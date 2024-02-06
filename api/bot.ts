@@ -1,4 +1,5 @@
-import { Bot, webhookCallback } from 'grammy';
+import { Bot, GrammyError, HttpError } from 'grammy';
+import { run } from '@grammyjs/runner';
 import { limit } from '@grammyjs/ratelimiter';
 import { autoRetry } from '@grammyjs/auto-retry';
 import start from './commands/start';
@@ -24,12 +25,6 @@ bot.api.setMyCommands([
 
 bot.use(start, quotes, animetv, news);
 
-const env = process.env.NODE_ENV;
-
-if (env === 'dev') {
-	bot.start();
-}
-
 bot.use(limit({
 	timeFrame: 5000,
 	limit: 3,
@@ -43,4 +38,17 @@ bot.api.config.use(autoRetry({
 	maxDelaySeconds: 5,
 }));
 
-export default webhookCallback(bot, 'https');
+run(bot);
+bot.catch((err) => {
+    const ctx = err.ctx;
+    console.error(`Error while handling update ${ctx.update.update_id}:`);
+    const e = err.error;
+    if (e instanceof GrammyError) {
+        console.error("Error in request:", e.description);
+    } else if (e instanceof HttpError) {
+        console.error("Could not contact Telegram:", e);
+    } else {
+        console.error("Unknown error:", e);
+    }
+});
+// export default webhookCallback(bot, 'https');
